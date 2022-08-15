@@ -17,7 +17,9 @@ headers = {
 url = "https://oldschool.runescape.wiki/w/High_Level_Alchemy"
     
 # The price considered valuable
-priceLimit = int(input("ENTER PROFIT MARGIN: "))
+defaultProfit = 350
+print("> HIT ENTER FOR DEFAULT VALUE (" + str(defaultProfit) + ")")
+profitLimit = int(input("> INPUT PROFIT MARGIN: ") or defaultProfit)
     
 # scrape all data from a url
 def collect_all_data(url):
@@ -74,7 +76,7 @@ def check_target_price(items):
     i = 0
     indexList = []
     for price in items:
-        if (int(str(price[1])) >= priceLimit):
+        if (int(str(price[1])) >= profitLimit):
             indexList.append(i)
         i += 1
     
@@ -130,7 +132,7 @@ while True:
     for cycle in range(loadTime):
         for pos in "|/-\\":
             os.system('cls')
-            print("Profits @ " + str(priceLimit))
+            print("Profits @ " + str(profitLimit))
             print("------------------------")
             for items in valuableItems:
                 print(items)
