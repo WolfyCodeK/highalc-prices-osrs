@@ -8,7 +8,7 @@ import os
 pauseLength = 0.75
 loadTime = 10 # seconds = (loadTime + 1) * 4 * pauseLength e.g. loadtime = 2 secoonds = 9, loadtime = 3, seconds = 11.25
 
-cmd = 'mode 40,25'
+cmd = 'mode 34,6'
 os.system(cmd)
 cmd = 'color 06'     
 os.system(cmd)
@@ -23,8 +23,10 @@ url = "https://oldschool.runescape.wiki/w/High_Level_Alchemy"
     
 # The price considered valuable
 defaultProfit = 350
-print("> HIT ENTER FOR DEFAULT VALUE (" + str(defaultProfit) + ")")
-profitLimit = int(input("> INPUT PROFIT MARGIN: ") or defaultProfit)
+print("----------------------------------")
+print("ALL ITEMS -> INPUT '0' \nDEFAULT PROFIT (" + str(defaultProfit) + ") -> HIT ENTER ")
+print("----------------------------------")
+profitLimit = int(input("MINIMUM PROFIT = ") or defaultProfit)
     
 # scrape all data from a url
 def collect_all_data(url):
@@ -125,6 +127,10 @@ def sort_valuable_items(valuableItems):
     
     return sortedList
 
+# Decrease terminal size
+cmd = 'mode 26,26'
+os.system(cmd)
+
 # Find items with best profit
 data = collect_all_data(url)
 data = collect_html(data)
@@ -138,17 +144,17 @@ while True:
         for pos in "|/-\\":
             os.system('cls')
             print("Profits @ " + str(profitLimit))
-            print("------------------------")
+            print("--------------------------")
             for items in valuableItems:
-                print(items)
-            print("------------------------")
+                print(" " + str(items))
+            print("--------------------------")
             print("")
             print("Checking " + str(pos))
             print("")
             print("CTRL + C to EXIT")
             sleep(pauseLength)
             
-    os.system('cls')  
+    os.system('cls') 
     
     # Find items with best profit
     data = collect_all_data(url)
