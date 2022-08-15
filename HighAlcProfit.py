@@ -8,6 +8,11 @@ import os
 pauseLength = 0.75
 loadTime = 10 # seconds = (loadTime + 1) * 4 * pauseLength e.g. loadtime = 2 secoonds = 9, loadtime = 3, seconds = 11.25
 
+cmd = 'mode 40,25'
+os.system(cmd)
+cmd = 'color 06'     
+os.system(cmd)
+
 # beautiful soup header
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"
@@ -105,11 +110,11 @@ def write_data(data, filename):
 def sort_valuable_items(valuableItems):
     sortedList = []
     for item in valuableItems:
-        sortedList.append(re.sub("[^0-9]", "", item))
+        sortedList.append(re.sub(r'^.*?-> ', '', item))
     
-    for i in range(len(sortedList)-1): 
+    for i in range(len(sortedList)):
         for i in range(len(sortedList)-1):
-            if (sortedList[i] < sortedList[i+1]):
+            if (int(sortedList[i]) < int(sortedList[i+1])):
                 temp = sortedList[i+1]
                 sortedList[i+1] = sortedList[i]
                 sortedList[i] = temp
