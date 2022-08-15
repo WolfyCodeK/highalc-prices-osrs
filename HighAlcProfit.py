@@ -1,3 +1,4 @@
+from math import floor
 from time import sleep
 from bs4 import BeautifulSoup
 import requests
@@ -5,10 +6,11 @@ import re
 import os
 
 # thread sleep length
-pauseLength = 0.75
-loadTime = 10 # seconds = (loadTime + 1) * 4 * pauseLength e.g. loadtime = 2 secoonds = 9, loadtime = 3, seconds = 11.25
+pauseLength = 1
+# how often the data gets scraped
+defaultLoadTime = 8 # seconds = loadTime * 4 * pauseLength e.g. 8 is 32 seconds
 
-cmd = 'mode 34,6'
+cmd = 'mode 34,8'
 os.system(cmd)
 cmd = 'color 06'     
 os.system(cmd)
@@ -22,11 +24,22 @@ headers = {
 url = "https://oldschool.runescape.wiki/w/High_Level_Alchemy"
     
 # The price considered valuable
-defaultProfit = 350
+defaultProfit = 0
+print("      [MINIMUM PROFIT SHOWN]")
+#print("ALL ITEMS -> 0 \nDEFAULT PROFIT (" + str(defaultProfit) + ") -> HIT ENTER ")
 print("----------------------------------")
-print("ALL ITEMS -> INPUT '0' \nDEFAULT PROFIT (" + str(defaultProfit) + ") -> HIT ENTER ")
+profitLimit = int(input("MINIMUM PROFIT (gp) = ") or defaultProfit)
 print("----------------------------------")
-profitLimit = int(input("MINIMUM PROFIT = ") or defaultProfit)
+print("  [HOW OFTEN PRICES ARE UPDATED]")
+#print("DEFAULT TIME (32s) -> HIT ENTER")
+print("----------------------------------")
+loadTime = int(input("UPDATE TIME (s) = ") or defaultLoadTime)
+
+# set minium loadTime
+if (loadTime < 4):
+    loadTime = 1
+else:
+    loadTime = floor(loadTime / 4)
     
 # scrape all data from a url
 def collect_all_data(url):
@@ -128,7 +141,7 @@ def sort_valuable_items(valuableItems):
     return sortedList
 
 # Decrease terminal size
-cmd = 'mode 26,26'
+cmd = 'mode 26,24'
 os.system(cmd)
 
 # Find items with best profit
