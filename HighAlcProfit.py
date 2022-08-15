@@ -7,8 +7,8 @@ import os
 
 # thread sleep length
 pauseLength = 1
-# how often the data gets scraped
-defaultLoadTime = 8 # seconds = loadTime * 4 * pauseLength e.g. 8 is 32 seconds
+# how often the data gets updated in seconds
+defaultLoadTime = 32
 
 cmd = 'mode 34,8'
 os.system(cmd)
@@ -174,3 +174,4 @@ while True:
     data = collect_html(data)
     items = create_item_list(data)
     valuableItems = check_target_price(items)
+    sortedValuableItems = sort_valuable_items(valuableItems)
