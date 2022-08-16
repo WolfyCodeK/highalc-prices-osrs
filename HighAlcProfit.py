@@ -141,7 +141,7 @@ def sort_valuable_items(valuableItems):
     return sortedList
 
 # Decrease terminal size
-cmd = 'mode 26,24'
+cmd = 'mode 26,25'
 os.system(cmd)
 
 # Find items with best profit
