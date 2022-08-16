@@ -59,9 +59,9 @@ def collect_html(data):
 
 def create_item_list(itemData):
      # find all relevant html data
-    itemList = re.findall(r'(?<=ROI)(.*?)(?=NOT)', itemData, flags=re.MULTILINE|re.DOTALL)
+    itemList = re.findall(r'(?<=>Item Cost)(.*?)(?=<b>NOT</b>)', itemData, flags=re.MULTILINE|re.DOTALL)
     
-    itemList = re.findall(r'(?<=title)(.*?)(?=%)', str(itemList), flags=re.MULTILINE|re.DOTALL)
+    itemList = re.findall(r'(?<=title)(.*?)(?=</td></tr>)', str(itemList), flags=re.MULTILINE|re.DOTALL)
     
     itemTitles = re.findall(r'(?<=title=")(.*?)(?=")', str(itemList), flags=re.MULTILINE|re.DOTALL)
     
