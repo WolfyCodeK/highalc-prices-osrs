@@ -9,8 +9,11 @@ import os
 pauseLength = 1
 # how often the data gets updated in seconds
 defaultLoadTime = 32
+ 
+terminalW = 34
+terminalH = 8
 
-cmd = 'mode 34,8'
+cmd = 'mode ' + str(terminalW) + ',' + str(terminalH)
 os.system(cmd)
 cmd = 'color 06'     
 os.system(cmd)
@@ -65,34 +68,52 @@ def create_item_list(itemData):
     
     itemTitles = re.findall(r'(?<=title=")(.*?)(?=")', str(itemList), flags=re.MULTILINE|re.DOTALL)
     
-    itemPrices = re.findall(r'(?<=class=")(.*?)(?=</span)', str(itemList), flags=re.MULTILINE|re.DOTALL)
+    itemValues = re.findall(r'(?<=class=")(.*?)(?=</span)', str(itemList), flags=re.MULTILINE|re.DOTALL)
     
-    # counter to get every 4th value in loop
+    itemPrices = itemValues
+    
+    # counter to get every 4th value in loop (value)
     i = 0
+    newPrices = []
+    for price in itemValues:
+        i += 1
+        if (i % 4 == 0):
+            newPrices.append(price)     
+    
+    # filter out unecessary data 
+    itemValues.clear
+    itemValues = newPrices
+    itemValues[len(itemValues)-1] = itemValues[len(itemValues)-1] + "coins"
+    itemValues = str(itemValues).replace("', '", "")
+    itemValues = re.findall(r'(?<=>)(.*?)(?=coins)', str(itemValues), flags=re.MULTILINE|re.DOTALL)
+    
+    # counter to get every 1st value in loop (price)          
+    i = 3
     newPrices = []
     for price in itemPrices:
         i += 1
         if (i % 4 == 0):
-            newPrices.append(price)
-            
-    itemPrices.clear
+            newPrices.append(price)   
+
+    # filter out unecessary data 
     itemPrices = newPrices
     itemPrices[len(itemPrices)-1] = itemPrices[len(itemPrices)-1] + "coins"
-    itemPrices = str(itemPrices).replace("', '", "")
+    itemPrices = str(itemPrices).replace("', '", "")    
+    itemPrices = re.findall(r'(?<=>)(.*?)(?=coins)', str(itemPrices), flags=re.MULTILINE|re.DOTALL)   
     
-    itemPrices = re.findall(r'(?<=>)(.*?)(?=coins)', str(itemPrices), flags=re.MULTILINE|re.DOTALL)
-    
+    # store all item data into list of tuples
     items = []
     for i in range(len(itemTitles)):
-        items.append((itemTitles[i], itemPrices[i]))
+        items.append((itemTitles[i], itemValues[i], itemPrices[i]))
     
     #write_data(itemTitles, "itemTitles.txt")
-    #write_data(itemPrices, "itemPrices.txt")
+    #write_data(itemValues, "itemValues.txt")
     #write_data(itemList, "itemList.txt")
     
     return items
 
 def check_target_price(items):
+    # check item value is higher than profit limit
     i = 0
     indexList = []
     for price in items:
@@ -100,10 +121,20 @@ def check_target_price(items):
             indexList.append(i)
         i += 1
     
+    # store all items above profit limit
     valuableItems = []
     i = 0
     for index in indexList:
-        valuableItems.append(items[index][0] + " -> " + items[index][1])  
+        name = items[index][0]
+        value = items[index][1]
+        price = items[index][2]
+        
+        name = name.ljust(19)
+        name = name.rjust(21)
+        price = price.rjust(9)
+        price = price.ljust(9)
+        
+        valuableItems.append(name + " |     " + value + "     |  " + price)  
         
     #write_data(valuableItems, "valuableItems.txt")
     
@@ -123,10 +154,13 @@ def write_data(data, filename):
     file.close()
 
 def sort_valuable_items(valuableItems):
+    # remove any unecessary data, so that it can be sorted
     sortedList = []
     for item in valuableItems:
-        sortedList.append(re.sub(r'^.*?-> ', '', item))
+        item = (re.sub(r'^.*?\| ', '', item))
+        sortedList.append(re.sub(r' \|  .*$', '', item))
     
+    # selection sort
     for i in range(len(sortedList)):
         for i in range(len(sortedList)-1):
             if (int(sortedList[i]) < int(sortedList[i+1])):
@@ -141,7 +175,9 @@ def sort_valuable_items(valuableItems):
     return sortedList
 
 # Decrease terminal size
-cmd = 'mode 26,25'
+terminalW = 54
+terminalH = 29
+cmd = 'mode ' + str(terminalW) + ',' + str(terminalH)
 os.system(cmd)
 
 # Find items with best profit
@@ -152,15 +188,19 @@ valuableItems = check_target_price(items)
 sortedValuableItems = sort_valuable_items(valuableItems)
 
 while True:
+    lineLen = terminalW
     # Show load
     for cycle in range(loadTime):
         for pos in "|/-\\":
             os.system('cls')
             print("Profits @ " + str(profitLimit))
-            print("--------------------------")
+            print("")
+            print("-" * lineLen)
+            print("         Name          |    Value    |     Price")
+            print("-" * lineLen)
             for items in valuableItems:
                 print(" " + str(items))
-            print("--------------------------")
+            print("-" * lineLen)
             print("")
             print("Checking " + str(pos))
             print("")
